@@ -32,4 +32,5 @@ class Authenticate extends Middleware
         }
         abort(401, 'Unauthorized');
     }
+    
 }

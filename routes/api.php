@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ContentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ActivitiesController;
+use App\Http\Controllers\Api\SubscriptionsController;
+use App\Http\Controllers\Api\UserController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,8 +23,8 @@ Route::post('/register',[AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => 'auth:api'], function(){
-  
-    
+
+
     Route::get('/contents', [ContentController::class, 'index']);
     Route::get('/contents/{id}', [ContentController::class, 'show']);
     Route::post('/contents', [ContentController::class, 'store']);
@@ -34,5 +37,16 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::put('/activities/{id}', [ActivitiesController::class, 'update']);
     Route::delete('/activities/{id}', [ActivitiesController::class, 'destroy']);
 
+    Route::post('/subscriptions', [SubscriptionsController::class,'store']);
+    Route::get('/subscriptions', [SubscriptionsController::class,'index']);
+    Route::put('/subscriptions/{id}', [SubscriptionsController::class,'update']);
+    Route::delete('/subscriptions/{id}', [SubscriptionsController::class,'destroy']);
+    Route::get('/subscriptions/{id}', [SubscriptionsController::class,'getByID']);
+
+
+    Route::get('/user', [UserController::class, 'read']);
+    Route::put('/user/{id}', [UserController::class, 'update']);
+    Route::delete('/user/{id}', [UserController::class, 'delete']);
+    Route::get('/user/{id}', [UserController::class, 'search']);
 
 });

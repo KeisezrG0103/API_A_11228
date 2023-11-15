@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Contents;
 use App\Models\Activities;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 class ActivitiesController extends Controller
@@ -42,7 +43,6 @@ class ActivitiesController extends Controller
         $validate = Validator::make($storeData, [
             'id_user' => 'required',
             'id_content' => 'required',
-            'accessed_at' => 'required'
         ]);
         if ($validate->fails())
             return response(['message' => $validate->errors()], 400);
@@ -64,11 +64,34 @@ class ActivitiesController extends Controller
             ], 404);
         }
 
-        $activities = Activities::create($storeData);
-        return response([
-            'message' => $user->name . ' has accessed ' . $content->title . ' at ' . $activities->accessed_at,
-            'data' => $activities,
-        ], 200);
+        if($content->type == "paid"){
+            if($user->status == 0){
+                return response([
+                    'message' => 'User not subscribed',
+                    'data' => null
+                ], 404);
+            }elseif($user->status == 1){
+                $activities = Activities::create([
+                    'id_user' => $storeData['id_user'],
+                    'id_content' => $storeData['id_content'],
+                    'accessed_at' => Carbon::now()
+                ]);
+                return response([
+                    'message' => $user->name . ' has accessed ' . $content->title . ' at ' . $activities->accessed_at,
+                    'data' => $activities,
+                ], 200);
+            }
+        }else if($content->type == "free"){
+            $activities = Activities::create([
+                'id_user' => $storeData['id_user'],
+                'id_content' => $storeData['id_content'],
+                'accessed_at' => Carbon::now()
+            ]);
+            return response([
+                'message' => $user->name . ' has accessed ' . $content->title . ' at ' . $activities->accessed_at,
+                'data' => $activities,
+            ], 200);
+        }
     }
 
     /**
@@ -129,15 +152,35 @@ class ActivitiesController extends Controller
             ], 404);
         }
 
-        $activities->id_user = $updateData['id_user'];
-        $activities->id_content = $updateData['id_content'];
-        $activities->accessed_at = $updateData['accessed_at'];
+        if($content->type == "paid"){
+            if($user->status == 0){
+                return response([
+                    'message' => 'User not subscribed',
+                    'data' => null
+                ], 404);
+            }elseif($user->status == 1){
+                $activities->id_user = $updateData['id_user'];
+                $activities->id_content = $updateData['id_content'];
+                $activities->accessed_at = Carbon::now();
 
-        if ($activities->save()) {
-            return response([
-                'message' => 'Update Activity Success',
-                'data' => $activities,
-            ], 200);
+                if ($activities->save()) {
+                    return response([
+                        'message' => 'Update Activity Success',
+                        'data' => $activities,
+                    ], 200);
+                }
+            }
+        }elseif ($content->type == "free") {
+            $activities->id_user = $updateData['id_user'];
+            $activities->id_content = $updateData['id_content'];
+            $activities->accessed_at = Carbon::now();
+
+            if ($activities->save()) {
+                return response([
+                    'message' => 'Update Activity Success',
+                    'data' => $activities,
+                ], 200);
+            }
         }
 
         return response([

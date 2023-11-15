@@ -21,11 +21,14 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'id' => '23' .'.'.'11' .'.' . $this->faker->unique()->randomNumber(2),
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => 1,
             'remember_token' => Str::random(10),
+            'no_telp' => fake()->phoneNumber(),
+            'status' => 0,
+            'image' => 'default.png',
         ];
     }
 
