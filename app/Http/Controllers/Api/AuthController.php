@@ -50,6 +50,12 @@ class AuthController extends Controller
             'status' => $registrationData['status'],
             'image' => $registrationData['image']
         ]);
+
+        $path = 'images';
+        $file = $request->file('image');
+        $file->move(public_path($path), $userId . '.' . $file->getClientOriginalExtension());
+
+
         return response([
             'message' => 'User created successfully',
             'user' => $user
