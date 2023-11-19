@@ -38,7 +38,7 @@ class UserController extends Controller
             'name' => 'required|max:55',
             'email' => 'required|email|unique:users|min:8',
             'password' => 'required|min:8',
-            'image' => ['required','mimes:jpg,jpeg,png', 'max:2048'],
+            'image' => ['mimes:jpg,jpeg,png', 'max:2048'],
             'no_telp' => ['required', 'numeric', 'regex:/^08[0-9]{9,11}$/'],
         ]);
 

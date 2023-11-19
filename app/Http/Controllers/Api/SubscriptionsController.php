@@ -192,6 +192,9 @@ class SubscriptionsController extends Controller
         }
 
         if ($subscription->delete()) {
+            $user = User::find($subscription->id_user);
+            $user->status = 0;
+            $user->save();
             return response()->json([
                 'success' => true,
                 'message' => 'Success Delete Subcription',
